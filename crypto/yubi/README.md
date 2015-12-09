@@ -22,3 +22,14 @@ Notes:
   the PUK/Admin code you set up when configuring the card.
     * If you try to use the `unblock` option of the `gpg --card-edit` tool
       you will likely meet with failure.
+
+* The gpg-agent (and scdaemon spawned by gpg-agent) won't be able to access the
+  YubiKey initially due to Apple's buggy PCSC. First, shutdown gpg-agent
+  `killall gpg-agent` and then disable Apple's ifdreader (this forces gpg-agent
+  and scdaemon to use the CCID lib instead): `sudo launchctl unload -w
+  /System/Library/LaunchDaemons/com.apple.ifdreader.plist`. When you next try a
+  GPG command that accesses the YubiKey, like `gpg2 --card-status`, gpg-agent and
+  scdaemon will start back up, and should work at this point. [1][1] [2][2]
+
+[1]: http://lifecs.likai.org/2015/02/yubikey-neo-n.html
+[2]: https://gpgtools.tenderapp.com/discussions/problems/28634-gpg-agent-stops-working-after-osx-upgrade-to-yosemite#comment_35808149
